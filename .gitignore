@@ -1,0 +1,10 @@
+*.o
+Microcontroller/Software/Release/*.asm
+Microcontroller/Software/Release/*.brws
+Microcontroller/Software/Release/*.casm
+Microcontroller/Software/Release/*.cof
+Microcontroller/Software/Release/*.lst
+Microcontroller/Software/Release/*.map
+Microcontroller/Software/Release/*.obj
+Microcontroller/Software/Release/*.stat
+Microcontroller/Software/Release/*.tree
