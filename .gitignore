@@ -8,3 +8,4 @@ Microcontroller/Software/Release/*.map
 Microcontroller/Software/Release/*.obj
 Microcontroller/Software/Release/*.stat
 Microcontroller/Software/Release/*.tree
+Raspberry_Pi/Manual_Control/Manual_Control
