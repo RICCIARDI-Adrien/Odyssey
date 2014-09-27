@@ -1,7 +1,7 @@
 [Settings]
 Target=PIC16F876
 Active Compiler=BoostC
-Active Directory=C:\Documents and Settings\Administrateur\Mes documents\Odyssey\Microcontroller\Software\
+Active Directory=
 Active Config=Release
 ClockRate=3686400
 Type=0

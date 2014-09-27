@@ -6,6 +6,7 @@
  * @author Adrien RICCIARDI
  * @version 1.0 : 17/12/2013
  * @version 1.1 : 01/03/2014, added variable motor speeds.
+ * @version 1.2 : 26/09/2014, added a command to read a motor speed.
  */
 #ifndef H_MOTOR_H
 #define H_MOTOR_H
@@ -55,5 +56,12 @@ void MotorSetState(TMotor Motor, TMotorState State);
  * @param Is_Speed_Increased Set to 1 to increase speed or to 0 to decrease speed.
  */
 void MotorChangeSpeed(TMotor Motor, TMotorDirection Direction, unsigned char Is_Speed_Increased);
+
+/** Read the current speed of a motor.
+ * @param Motor The motor to read speed.
+ * @param Direction The motor direction to read speed.
+ * @return The motor PWM duty cycle.
+ */
+unsigned short MotorReadSpeed(TMotor Motor, TMotorDirection Direction);
 
 #endif

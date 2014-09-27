@@ -34,6 +34,7 @@ void interrupt(void)
 	TMotor Motor;
 	TMotorState State;
 	TMotorDirection Direction;
+	unsigned short Motor_Speed;
 	
 	// Handle UART receive interrupt
 	if (UARTHasInterruptOccured())
@@ -58,11 +59,11 @@ void interrupt(void)
 			// Set motor state
 			case ROBOT_COMMAND_SET_MOTOR_STATE:
 				// Extract motor ID
-				if (Command & 0x20) Motor = MOTOR_RIGHT;
+				if (Command & 0x10) Motor = MOTOR_RIGHT;
 				else Motor = MOTOR_LEFT;
 				
 				// Extract requested state
-				Command = (Command >> 3) & 0x03;
+				Command = (Command >> 2) & 0x03;
 				if (Command == 1) State = MOTOR_STATE_FORWARD;
 				else if (Command == 2) State = MOTOR_STATE_BACKWARD;
 				else State = MOTOR_STATE_STOPPED; // So an unknown state will stop the motor
@@ -73,8 +74,8 @@ void interrupt(void)
 				
 			// Light or turn off the green LED
 			case ROBOT_COMMAND_SET_LED_STATE:
-				// Bit 5 tells the led state
-				if (Command & 40) RobotLedOn();
+				// Bit 4 tells the led state
+				if (Command & 0x10) RobotLedOn();
 				else RobotLedOff();
 				break;
 				
@@ -85,20 +86,37 @@ void interrupt(void)
 				UARTWriteByte(Battery_Voltage);
 				break;
 				
-			// Increase or decrease motor speed
+			// Increase or decrease a motor speed
 			case ROBOT_COMMAND_CHANGE_MOTOR_SPEED:
 				// Extract motor ID
-				if (Command & 0x20) Motor = MOTOR_RIGHT;
+				if (Command & 0x10) Motor = MOTOR_RIGHT;
 				else Motor = MOTOR_LEFT;
 				
 				// Extract direction
-				if (Command & 0x10) Direction = MOTOR_DIRECTION_BACKWARD;
+				if (Command & 0x08) Direction = MOTOR_DIRECTION_BACKWARD;
 				else Direction = MOTOR_DIRECTION_FORWARD;
 				
 				// Extract speed
-				Command = (Command & 0x08) >> 3;
+				Command = (Command & 0x04) >> 2;
 				
 				MotorChangeSpeed(Motor, Direction, Command);
+				break;
+				
+			// Get a motor current speed
+			case ROBOT_COMMAND_READ_MOTOR_SPEED:
+				// Extract motor ID
+				if (Command & 0x10) Motor = MOTOR_RIGHT;
+				else Motor = MOTOR_LEFT;
+				
+				// Extract direction
+				if (Command & 0x08) Direction = MOTOR_DIRECTION_BACKWARD;
+				else Direction = MOTOR_DIRECTION_FORWARD;
+				
+				Motor_Speed = MotorReadSpeed(Motor, Direction);
+				
+				// Send value in big endian mode
+				UARTWriteByte(Motor_Speed >> 8);
+				UARTWriteByte(Motor_Speed);
 				break;
 		}
 	

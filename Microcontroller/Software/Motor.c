@@ -186,4 +186,17 @@ void MotorChangeSpeed(TMotor Motor, TMotorDirection Direction, unsigned char Is_
 		MotorSetState(MOTOR_RIGHT, Motor_Right_State);
 	}
 }
-		
+
+unsigned short MotorReadSpeed(TMotor Motor, TMotorDirection Direction)
+{
+	if (Motor == MOTOR_LEFT)
+	{
+		if (Direction == MOTOR_DIRECTION_FORWARD) return Motor_Left_Duty_Cycle_Forward;
+		else return Motor_Left_Duty_Cycle_Backward;
+	}
+	else
+	{
+		if (Direction == MOTOR_DIRECTION_FORWARD) return Motor_Right_Duty_Cycle_Forward;
+		else return Motor_Right_Duty_Cycle_Backward;
+	}
+}
