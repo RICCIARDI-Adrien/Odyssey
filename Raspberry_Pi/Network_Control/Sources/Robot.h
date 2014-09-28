@@ -57,7 +57,8 @@ typedef enum
         ROBOT_COMMAND_RIGHT,
         ROBOT_COMMAND_READ_BATTERY_VOLTAGE,
         ROBOT_COMMAND_LED_ON,
-        ROBOT_COMMAND_LED_OFF
+        ROBOT_COMMAND_LED_OFF,
+	ROBOT_COMMAND_POWER_OFF
 } TRobotCommand;
 
 //-------------------------------------------------------------------------------------------------

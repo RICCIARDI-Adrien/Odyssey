@@ -2,6 +2,7 @@
  * Main loop for unsecure version.
  * @author Adrien RICCIARDI
  * @version 1.0 : 07/04/2014
+ * @version 1.1 : 28/09/2014, added a command to power off the system.
  */
 #include <arpa/inet.h> // For ntohl()
 #include <pthread.h>
@@ -222,6 +223,11 @@ int main(int argc, char *argv[])
 				case ROBOT_COMMAND_LED_OFF:
 					Log(LOG_DEBUG, "Turn off led.");
 					RobotSetLedState(0);
+					break;
+
+				case ROBOT_COMMAND_POWER_OFF:
+					Log(LOG_DEBUG, "Halting the system.");
+					if (system("sudo halt") == -1) Log(LOG_ERR, "Failed to halt the system.");
 					break;
 
 				default:
