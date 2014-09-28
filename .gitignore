@@ -9,3 +9,4 @@ Microcontroller/Software/Release/*.obj
 Microcontroller/Software/Release/*.stat
 Microcontroller/Software/Release/*.tree
 Raspberry_Pi/Manual_Control/Manual_Control
+Raspberry_Pi/Network_Control/Network_Control
