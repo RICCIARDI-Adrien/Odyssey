@@ -1,3 +1,4 @@
+*.class
 *.o
 Microcontroller/Software/Release/*.asm
 Microcontroller/Software/Release/*.brws
