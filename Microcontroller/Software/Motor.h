@@ -42,7 +42,7 @@ typedef enum
 /** Initialize the PWM modules used to control the motors.
  * @warning This function must be called only once at the beginning of the program.
  */
-void MotorInit(void);
+void MotorInitialize(void);
 
 /** Set the state of a motor (running forward, running backward or stopped).
  * @param Motor The motor to command.

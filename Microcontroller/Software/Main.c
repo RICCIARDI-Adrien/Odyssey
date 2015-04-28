@@ -20,21 +20,24 @@
 #pragma CLOCK_FREQ 3686400
 
 //--------------------------------------------------------------------------------------------------
-// Private variables
-//--------------------------------------------------------------------------------------------------
-static unsigned short Battery_Voltage;
-
-//--------------------------------------------------------------------------------------------------
 // Private functions
 //--------------------------------------------------------------------------------------------------
 void interrupt(void)
 {
 	static unsigned char Is_Magic_Number_Received = 0;
+	static unsigned short Battery_Voltage = 0;
 	unsigned char Command;
 	TMotor Motor;
 	TMotorState State;
 	TMotorDirection Direction;
 	unsigned short Motor_Speed;
+	
+	// Handle ADC interrupt before the UART one to grant a correct voltage value when entering the UART interrupt
+	if (ADCHasInterruptOccured())
+	{
+		Battery_Voltage = ADCReadLastSample();
+		ADCClearInterruptFlag();
+	}
 	
 	// Handle UART receive interrupt
 	if (UARTHasInterruptOccured())
@@ -131,10 +134,10 @@ void interrupt(void)
 void main(void)
 {
 	// Initialize robot
-	RobotInit();
-	MotorInit();
-	ADCInit();
-	UARTInit(UART_BAUD_RATE_115200);
+	RobotInitialize();
+	MotorInitialize();
+	ADCInitialize();
+	UARTInitialize(UART_BAUD_RATE_115200);
 	
 	// Stop motors
 	MotorSetState(MOTOR_LEFT, MOTOR_STATE_STOPPED);
@@ -143,10 +146,6 @@ void main(void)
 	// Turn off LED to let master light it when it has finished booting
 	RobotLedOff();
 	
-	// Do some fake reads to calibrate ADC
-	ADCReadWord();
-	ADCReadWord();
-	
 	// Enable interrupts
 	intcon = 0xC0;
 	
@@ -154,9 +153,7 @@ void main(void)
 	while (1)
 	{
 		// Read battery voltage each second
-		UARTDisableInterrupt(); // Atomic operation
-		Battery_Voltage = ADCReadWord();
-		UARTEnableInterrupt();
+		ADCStartSampling();
 		delay_s(1);
 	}
 }

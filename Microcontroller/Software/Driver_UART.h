@@ -24,7 +24,7 @@
  * @param Baud_Rate Use a UART_BAUD_RATE_X constant to indicate wanted baud rate.
  * @warning This function must be called only once at the beginning of the program.
  */
-void UARTInit(unsigned char Baud_Rate);
+void UARTInitialize(unsigned char Baud_Rate);
 
 /** Read a byte from the UART.
  * @return The read byte.
@@ -36,20 +36,6 @@ unsigned char UARTReadByte(void);
  * @param Byte The byte to write.
  */
 void UARTWriteByte(unsigned char Byte);
-
-/** Allow a received byte to trigger an interrupt. */
-#ifdef DOXYGEN
-	void UARTEnableInterrupt(void);
-#else
-	#define UARTEnableInterrupt() pie1.RCIE = 1
-#endif
-
-/** Disable all UART-related interrupts. */
-#ifdef DOXYGEN
-	void UARTDisableInterrupt(void);
-#else
-	#define UARTDisableInterrupt() pie1.RCIE = 0
-#endif
 
 /** Check if the UART interrupt happened.
  * @return 1 if the interrupt has triggered or 0 if not.

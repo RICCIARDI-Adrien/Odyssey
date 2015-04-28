@@ -31,9 +31,9 @@
 //--------------------------------------------------------------------------------------------------
 /** Configure robot hardware. */
 #ifdef DOXYGEN
-	void RobotInit(void);
+	void RobotInitialize(void);
 #else
-	#define RobotInit() \
+	#define RobotInitialize() \
 	{ \
 		trisb = 0; /* Configure LED port as output */ \
 		RobotLedOff(); \

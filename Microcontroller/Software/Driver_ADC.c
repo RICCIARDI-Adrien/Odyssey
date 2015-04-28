@@ -8,22 +8,25 @@
 //--------------------------------------------------------------------------------------------------
 // Public functions
 //--------------------------------------------------------------------------------------------------
-void ADCInit(void)
+void ADCInitialize(void)
 {
 	// Configure ADC pin as input
 	trisa.0 = 1;
 	
 	// Configure module
 	adcon1 = 0x8E; // Result is right justified, select only RA0 as analog input
-	adcon0 = 0x41; // Use a conversion clock of Fosc/8, select channel 0, enable module 
+	adcon0 = 0x41; // Use a conversion clock of Fosc/8, select channel 0, enable module
+	
+	// Enable the ADC interrupt
+	pir1.ADIE = 1;
 }
 
-unsigned short ADCReadWord(void)
+void ADCStartSampling(void)
 {
-	// Start conversion
 	adcon0.GO = 1;
-	
-	// Wait for conversion to finish
-	while (adcon0.GO);
+}
+
+unsigned short ADCReadLastSample(void)
+{
 	return ((adresh << 8) & 0xFF00) | adresl;
 }

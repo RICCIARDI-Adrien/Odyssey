@@ -38,7 +38,7 @@ static TMotorState Motor_Left_State, Motor_Right_State; // Keep current states t
 //--------------------------------------------------------------------------------------------------
 // Public functions
 //--------------------------------------------------------------------------------------------------
-void MotorInit(void)
+void MotorInitialize(void)
 {	
 	// Configure PWM pins as outputs
 	trisc.MOTOR_LEFT_PIN = 0;
