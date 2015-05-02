@@ -12,11 +12,11 @@
 #include "Robot.h"
 
 //--------------------------------------------------------------------------------------------------
-// Private constants
+// Private constants and macros
 //--------------------------------------------------------------------------------------------------
-// Configure PIC16F876 fuses
+/** Configure PIC16F876 fuses. */
 #pragma DATA _CONFIG, _PWRTE_ON & _BODEN_ON & _WDT_OFF & _LVP_OFF & _CPD_OFF & _DEBUG_OFF & _XT_OSC & _CP_OFF
-// Configure clock frequency (Hz)
+/** Configure clock frequency (Hz). */
 #pragma CLOCK_FREQ 3686400
 
 //--------------------------------------------------------------------------------------------------
@@ -24,33 +24,48 @@
 //--------------------------------------------------------------------------------------------------
 void interrupt(void)
 {
-	static unsigned char Is_Magic_Number_Received = 0;
-	static unsigned short Battery_Voltage = 0;
-	unsigned char Command;
+	// There is no need to check interrupt flags as only the motor can generate interrupts
+	MotorInterruptHandler();
+}
+
+//--------------------------------------------------------------------------------------------------
+// Entry point
+//--------------------------------------------------------------------------------------------------
+void main(void)
+{
+	unsigned char Is_Magic_Number_Received = 0, Command;
+	unsigned short Word_Temp;
 	TMotor Motor;
 	TMotorState State;
 	TMotorDirection Direction;
-	unsigned short Motor_Speed;
 	
-	// Handle ADC interrupt before the UART one to grant a correct voltage value when entering the UART interrupt
-	if (ADCHasInterruptOccured())
-	{
-		Battery_Voltage = ADCReadLastSample();
-		ADCClearInterruptFlag();
-	}
+	// Initialize robot
+	RobotInitialize();
+	MotorInitialize();
+	ADCInitialize();
+	UARTInitialize(UART_BAUD_RATE_115200);
 	
-	// Handle UART receive interrupt
-	if (UARTHasInterruptOccured())
+	// Stop motors
+	MotorSetState(MOTOR_LEFT, MOTOR_STATE_STOPPED);
+	MotorSetState(MOTOR_RIGHT, MOTOR_STATE_STOPPED);
+		
+	// Turn off LED to let master light it when it has finished booting
+	RobotLedOff();
+	
+	// Enable interrupts
+	intcon = 0xC0;
+	
+	// Main loop
+	while (1)
 	{
+		// Wait for a byte to be received
 		Command = UARTReadByte();
 		
 		// Wait for a leading magic number
 		if (!Is_Magic_Number_Received)
 		{
 			if (Command == ROBOT_COMMAND_MAGIC_NUMBER) Is_Magic_Number_Received = 1;
-			// Re-enable UART interrupt
-			UARTClearInterruptFlag();
-			return;
+			continue;
 		}
 		
 		// Reached when the magic number was previously received
@@ -84,9 +99,12 @@ void interrupt(void)
 				
 			// Return the last sampled battery voltage value
 			case ROBOT_COMMAND_READ_BATTERY_VOLTAGE:
+				// Sample the current battery voltage, this will take 20µs in the worst case
+				Word_Temp = ADCReadWord();
+			
 				// Send value in big endian mode
-				UARTWriteByte(Battery_Voltage >> 8);
-				UARTWriteByte(Battery_Voltage);
+				UARTWriteByte(Word_Temp >> 8);
+				UARTWriteByte(Word_Temp);
 				break;
 				
 			// Increase or decrease a motor speed
@@ -115,45 +133,16 @@ void interrupt(void)
 				if (Command & 0x08) Direction = MOTOR_DIRECTION_BACKWARD;
 				else Direction = MOTOR_DIRECTION_FORWARD;
 				
-				Motor_Speed = MotorReadSpeed(Motor, Direction);
+				Word_Temp = MotorReadSpeed(Motor, Direction);
 				
 				// Send value in big endian mode
-				UARTWriteByte(Motor_Speed >> 8);
-				UARTWriteByte(Motor_Speed);
+				UARTWriteByte(Word_Temp >> 8);
+				UARTWriteByte(Word_Temp);
+				break;
+			
+			// Do nothing if the instruction is unknown
+			default:
 				break;
 		}
-	
-		// Re-enable UART interrupt
-		UARTClearInterruptFlag();
-	}
-}
-
-//--------------------------------------------------------------------------------------------------
-// Entry point
-//--------------------------------------------------------------------------------------------------
-void main(void)
-{
-	// Initialize robot
-	RobotInitialize();
-	MotorInitialize();
-	ADCInitialize();
-	UARTInitialize(UART_BAUD_RATE_115200);
-	
-	// Stop motors
-	MotorSetState(MOTOR_LEFT, MOTOR_STATE_STOPPED);
-	MotorSetState(MOTOR_RIGHT, MOTOR_STATE_STOPPED);
-		
-	// Turn off LED to let master light it when it has finished booting
-	RobotLedOff();
-	
-	// Enable interrupts
-	intcon = 0xC0;
-	
-	// Main loop
-	while (1)
-	{
-		// Read battery voltage each second
-		ADCStartSampling();
-		delay_s(1);
 	}
 }

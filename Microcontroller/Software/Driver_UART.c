@@ -18,9 +18,6 @@ void UARTInitialize(unsigned char Baud_Rate)
 	spbrg = Baud_Rate; // Set baud rate
 	txsta = 0x26; // 8-bit transmission, transmission enabled, high speed
 	rcsta = 0x90; // Reception and serial port module enabled
-	
-	// Enable the UART interrupt
-	pie1.RCIE = 1;
 }
 
 unsigned char UARTReadByte(void)

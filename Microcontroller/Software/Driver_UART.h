@@ -37,20 +37,4 @@ unsigned char UARTReadByte(void);
  */
 void UARTWriteByte(unsigned char Byte);
 
-/** Check if the UART interrupt happened.
- * @return 1 if the interrupt has triggered or 0 if not.
- */
-#ifdef DOXYGEN
-	unsigned char UARTHasInterruptOccured(void);
-#else
-	#define UARTHasInterruptOccured() pir1.RCIF
-#endif
-
-/** Clear interrupt flag to allow new interrupt. */
-#ifdef DOXYGEN
-	void UARTClearInterruptFlag(void);
-#else
-	#define UARTClearInterruptFlag() pir1.RCIF = 0
-#endif
-
 #endif

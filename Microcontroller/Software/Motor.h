@@ -7,6 +7,7 @@
  * @version 1.0 : 17/12/2013
  * @version 1.1 : 01/03/2014, added variable motor speeds.
  * @version 1.2 : 26/09/2014, added a command to read a motor speed.
+ * @version 1.3 : 01/05/2015, used the Compare modules to achieve a 50Hz PWM frequency.
  */
 #ifndef H_MOTOR_H
 #define H_MOTOR_H
@@ -43,6 +44,9 @@ typedef enum
  * @warning This function must be called only once at the beginning of the program.
  */
 void MotorInitialize(void);
+
+/** Handle all motor-related interrupts. */
+void MotorInterruptHandler(void);
 
 /** Set the state of a motor (running forward, running backward or stopped).
  * @param Motor The motor to command.

@@ -15,18 +15,15 @@ void ADCInitialize(void)
 	
 	// Configure module
 	adcon1 = 0x8E; // Result is right justified, select only RA0 as analog input
-	adcon0 = 0x41; // Use a conversion clock of Fosc/8, select channel 0, enable module
-	
-	// Enable the ADC interrupt
-	pir1.ADIE = 1;
+	adcon0 = 0x41; // Use a conversion clock of Fosc/8, select channel 0, enable module 
 }
 
-void ADCStartSampling(void)
+unsigned short ADCReadWord(void)
 {
+	// Start conversion
 	adcon0.GO = 1;
-}
-
-unsigned short ADCReadLastSample(void)
-{
+	
+	// Wait for conversion to finish
+	while (adcon0.GO);
 	return ((adresh << 8) & 0xFF00) | adresl;
 }
