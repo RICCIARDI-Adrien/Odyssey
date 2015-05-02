@@ -19,7 +19,7 @@ public class MainFrame extends JFrame
 	/** Frame width in pixels. */
 	private final int MAIN_FRAME_WIDTH = 400;
 	/** Frame height in pixels. */
-	private final int MAIN_FRAME_HEIGHT = 305;
+	private final int MAIN_FRAME_HEIGHT = 315;
 	
 	/** The panel containing all the interface components. */
 	private InterfacePanel _interfacePanel;

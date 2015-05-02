@@ -37,7 +37,7 @@ public class InterfacePanel extends JPanel
 		add(lblNewLabel_1);
 		
 		_textFieldIpAddress = new JTextField();
-		_textFieldIpAddress.setText("192.168.1.23");
+		_textFieldIpAddress.setText("192.168.100.1");
 		_textFieldIpAddress.setBounds(124, 10, 114, 19);
 		add(_textFieldIpAddress);
 		_textFieldIpAddress.setColumns(10);
