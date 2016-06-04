@@ -1,0 +1,20 @@
+#!/bin/sh /etc/rc.common
+# Copyright (C) 2016 Adrien RICCIARDI
+
+# The script will start right after the network script and will stop right before it
+START=21
+STOP=89
+
+WIFI_INTERFACE=wlan0
+WIFI_IP=192.168.100.1
+
+DAEMON_BINARY=/usr/sbin/hostapd
+DAEMON_CONFIGURATION_FILE=/etc/hostapd.conf
+DAEMON_OPTIONS="-B $DAEMON_CONFIGURATION_FILE"
+
+boot() {
+	# Bring WiFi interface up
+	ifconfig $WIFI_INTERFACE $WIFI_IP
+	
+	$DAEMON_BINARY $DAEMON_OPTIONS
+}
