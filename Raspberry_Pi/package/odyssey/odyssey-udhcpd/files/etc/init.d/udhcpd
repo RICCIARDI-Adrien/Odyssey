@@ -1,0 +1,16 @@
+#!/bin/sh /etc/rc.common
+# Copyright (C) 2016 Adrien RICCIARDI
+
+# The script will start right after the hostapd script and will stop right before it
+START=22
+STOP=88
+
+WIFI_INTERFACE=wlan0
+WIFI_IP=192.168.100.1
+
+DAEMON_BINARY=/usr/sbin/udhcpd
+DAEMON_CONFIGURATION_FILE=/etc/udhcpd.conf
+
+boot() {
+	$DAEMON_BINARY $DAEMON_CONFIGURATION_FILE
+}
