@@ -1,0 +1,18 @@
+#!/bin/sh /etc/rc.common
+# Copyright (C) 2016 Adrien RICCIARDI
+
+# The script will start right after the udhcpd script and will stop right before it
+START=23
+STOP=87
+
+DAEMON_BINARY_PATH=/usr/sbin
+DAEMON_BINARY_NAME=network-control
+DAEMON_OPTIONS="0.0.0.0 1234"
+
+boot() {
+	$DAEMON_BINARY_PATH/$DAEMON_BINARY_NAME $DAEMON_OPTIONS
+}
+
+stop() {
+	pkill -15 $DAEMON_BINARY_NAME
+}
