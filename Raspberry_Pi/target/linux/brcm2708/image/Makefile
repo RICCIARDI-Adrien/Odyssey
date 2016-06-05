@@ -29,6 +29,8 @@ define Build/boot-img
 	mcopy -i $@.boot $(KDIR)/fixup_cd.dat ::
 	mcopy -i $@.boot cmdline.txt ::
 	mcopy -i $@.boot config.txt ::
+	mcopy -i $@.boot start_x.elf ::
+	mcopy -i $@.boot fixup_x.dat ::
 	mcopy -i $@.boot $(word 1,$^) ::kernel.img
 	$(foreach dts,$(shell echo $(DEVICE_DTS)),mcopy -i $@.boot $(DTS_DIR)/$(dts).dtb ::;)
 	mmd -i $@.boot ::/overlays
