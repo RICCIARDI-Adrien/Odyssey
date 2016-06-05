@@ -6,6 +6,5 @@ START=24
 STOP=86
 
 boot() {
-	# Busybox's netcat doesn't provide -k option, so use an infinite loop...
-	while true; do /usr/sbin/raspivid -w 640 -h 480 -b 1000000 -t 0 -fps 24 -n -ih -vs -ex auto -o - | nc -l -p 1235; done&
+	raspivid -w 640 -h 480 -b 1000000 -t 0 -fps 24 -n -ih -vs -ex auto -o - | fast-network-transfer 1235&
 }
