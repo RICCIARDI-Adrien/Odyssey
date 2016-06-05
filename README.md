@@ -22,8 +22,10 @@ All the PC stuff is contained in this directory.
 Raspberry_Pi
 ------------
 
-A Raspberry Pi Model A handles the robot's camera (a RaspiCam) and connects to a PC via WiFi.
-The code has been compiled on the Raspberry Pi using GCC.
+A Raspberry Pi Model A handles the robot's camera (a RaspiCam) and creates a WiFi access point for a PC to connect to it.
 
-*Manual_Control* program allows to test all the robot hardware and to set the motor various speeds.
-*Network_Control* is the server to which the PC Remote application will connect. It controls the motors and monitors the robot parameters.
+The whole Raspberry Pi firmware is located in this directory. It is based on the OpenWRT Linux distribution.
+
+To compile it, simply type *make* in the *Raspberry_Pi* directory. The resulting SD-card image will be located in the *bin/brcm2708/openwrt-brcm2708-bcm2708-rpi-ext4-sdcard.img* file.
+
+You can burn it on a SD-card the same way than any other image is burned.
