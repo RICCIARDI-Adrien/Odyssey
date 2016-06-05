@@ -61,7 +61,7 @@ static void SignalHandlerTerm(int __attribute__((unused)) Signal_Number)
 {
 	close(Socket_Client);
 	close(Socket_Server);
-	Log(LOG_INFO, "Server successfully exited.");
+	Log("Server successfully exited.\n");
 	exit(0);
 }
 
@@ -71,7 +71,7 @@ static void SignalHandlerTerm(int __attribute__((unused)) Signal_Number)
 static void SignalHandlerPipe(int __attribute__((unused)) Signal_Number)
 {
 	close(Socket_Client);
-	Log(LOG_INFO, "Client connection dropped, closing port.");
+	Log("Client connection dropped, closing port.\n");
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -83,33 +83,42 @@ int main(int argc, char *argv[])
 	unsigned short Server_Port;
 	TRobotCommand Command;
 	struct sigaction Signal_Action;
-
-	// Connect to syslog
-	LogInit("Network Control");
-	Log(LOG_INFO, "--- Network Control server starting ---");
+	char *String_Log_File_Name;
 
 	// Check parameters
-	if (argc != 3)
+	if (argc != 4)
 	{
-		Log(LOG_ERR, "Bad calling arguments. Usage : %s serverIpAddress serverListeningPort", argv[0]);
+		printf("Usage : %s serverIpAddress serverListeningPort logFileName\n"
+			"  serverIpAddress : dotted IPv4 address\n"
+			"  serverListeningPort : decimal port value\n"
+			"  logFileName : the file to store log messages into (use /dev/null to disable logs)\n", argv[0]);
 		return EXIT_FAILURE;
 	}
 
 	// Retrieve parameters values
 	String_Server_IP = argv[1];
 	Server_Port = atoi(argv[2]);
+	String_Log_File_Name = argv[3];
+	
+	// Start logging system
+	if (LogInitialize(String_Log_File_Name) != 0)
+	{
+		printf("Error : failed to open the log file '%s'.\n", String_Log_File_Name);
+		return EXIT_FAILURE;
+	}
+	Log("--- Network Control server starting ---\n");
 
-	// Daemonize server soon so the created resources (threads) are made for the daemonized child and not for the father process
+	// Daemonize server soon so the created resources (threads) are available for the daemonized child and not for the father process
 	if (daemon(1, 1) != 0)
 	{
-		Log(LOG_ERR, "Error : can't daemonize server.");
+		Log("Error : can't daemonize server.\n");
 		return EXIT_FAILURE;
 	}
 
 	// Connect to the robot
 	if (!RobotInit("/dev/ttyAMA0"))
 	{
-		Log(LOG_ERR, "Error : can't connect to the robot.");
+		Log("Error : can't connect to the robot.\n");
 		return EXIT_FAILURE;
 	}
 	// Stop robot in case of UART glitch
@@ -119,7 +128,7 @@ int main(int argc, char *argv[])
 	// Create battery voltage thread
 	if (pthread_create(&Thread_ID, NULL, ThreadReadBatteryVoltage, NULL) != 0)
 	{
-		Log(LOG_ERR, "Error : can't create battery voltage thread.");
+		Log("Error : can't create battery voltage thread.\n");
 		return EXIT_FAILURE;
 	}
 
@@ -127,12 +136,12 @@ int main(int argc, char *argv[])
 	Socket_Server = NetworkServerCreate(String_Server_IP, Server_Port);
 	if (Socket_Server == -1)
 	{
-		Log(LOG_ERR, "Error : can't bind server socket.");
+		Log("Error : can't bind server socket.\n");
 		return EXIT_FAILURE;
 	}
 	else if (Socket_Server == -2)
 	{
-		Log(LOG_ERR, "Error : can't bind server.");
+		Log("Error : can't bind server.\n");
 		return EXIT_FAILURE;
 	}
 
@@ -140,7 +149,7 @@ int main(int argc, char *argv[])
 	Signal_Action.sa_handler = SignalHandlerTerm;
 	if (sigaction(SIGTERM, &Signal_Action, NULL) == -1)
 	{
-		Log(LOG_ERR, "Error : can't register term signal handler.");
+		Log("Error : can't register term signal handler.\n");
 		return EXIT_FAILURE;
 	}
 
@@ -148,31 +157,31 @@ int main(int argc, char *argv[])
 	Signal_Action.sa_handler = SignalHandlerPipe;
 	if (sigaction(SIGPIPE, &Signal_Action, NULL) == -1)
 	{
-		Log(LOG_ERR, "Error : can't register pipe signal handler.");
+		Log("Error : can't register pipe signal handler.\n");
 		return EXIT_FAILURE;
 	}
 
-	Log(LOG_INFO, "Server ready.");
+	Log("Server ready.\n");
 
 	while (1)
 	{
-		Log(LOG_INFO, "Server waiting for client...");
+		Log("Server waiting for client...\n");
 
 		// Wait for the unique client
 		Socket_Client = NetworkServerListen(Socket_Server);
 		if (Socket_Client < 0)
 		{
-			Log(LOG_ERR, "Error : the client could not connect.");
+			Log("Error : the client could not connect.\n");
 			continue;
 		}
-		Log(LOG_INFO, "Client trying to connect...");
+		Log("Client trying to connect...\n");
 
 		while (1)
 		{
 			// Wait for a command
 			if (recv(Socket_Client, &Command, sizeof(Command), MSG_WAITALL) != sizeof(Command))
 			{
-				Log(LOG_INFO, "Could not receive client's command, disconnecting.");
+				Log("Could not receive client's command, disconnecting.\n");
 				RobotSetMotion(ROBOT_MOTION_STOPPED);
 				RobotSetLedState(0);
 				close(Socket_Client);
@@ -185,53 +194,53 @@ int main(int argc, char *argv[])
 			switch (Command)
 			{
 				case ROBOT_COMMAND_STOP:
-					Log(LOG_DEBUG, "Stop.");
+					Log("Stop.\n");
 					RobotSetMotion(ROBOT_MOTION_STOPPED);
 					break;
 
 				case ROBOT_COMMAND_FORWARD:
-					Log(LOG_DEBUG, "Forward.");
+					Log("Forward.\n");
 					RobotSetMotion(ROBOT_MOTION_FORWARD);
 					break;
 
 				case ROBOT_COMMAND_BACKWARD:
-					Log(LOG_DEBUG, "Backward.");
+					Log("Backward.\n");
 					RobotSetMotion(ROBOT_MOTION_BACKWARD);
 					break;
 
 				case ROBOT_COMMAND_LEFT:
-					Log(LOG_DEBUG, "Left.");
+					Log("Left.\n");
 					RobotSetMotion(ROBOT_MOTION_FORWARD_TURN_LEFT);
 					break;
 
 				case ROBOT_COMMAND_RIGHT:
-					Log(LOG_DEBUG, "Right.");
+					Log("Right.\n");
 					RobotSetMotion(ROBOT_MOTION_FORWARD_TURN_RIGHT);
 					break;
 
 				case ROBOT_COMMAND_READ_BATTERY_VOLTAGE:
-					Log(LOG_DEBUG, "Read battery voltage percentage : %d%%.", Battery_Voltage_Percentage);
-					if (write(Socket_Client, &Battery_Voltage_Percentage, sizeof(Battery_Voltage_Percentage)) != sizeof(Battery_Voltage_Percentage)) Log(LOG_WARNING, "Warning : could not send battery voltage percentage correctly.");
-					if (write(Socket_Client, &Battery_Voltage_Rounded, sizeof(Battery_Voltage_Rounded)) != sizeof(Battery_Voltage_Rounded)) Log(LOG_WARNING, "Warning : could not send battery voltage correctly.");
+					Log("Read battery voltage percentage : %d%%.\n", Battery_Voltage_Percentage);
+					if (write(Socket_Client, &Battery_Voltage_Percentage, sizeof(Battery_Voltage_Percentage)) != sizeof(Battery_Voltage_Percentage)) Log("Warning : could not send battery voltage percentage correctly.\n");
+					if (write(Socket_Client, &Battery_Voltage_Rounded, sizeof(Battery_Voltage_Rounded)) != sizeof(Battery_Voltage_Rounded)) Log("Warning : could not send battery voltage correctly.\n");
 					break;
 
 				case ROBOT_COMMAND_LED_ON:
-					Log(LOG_DEBUG, "Light led.");
+					Log("Light led.\n");
 					RobotSetLedState(1);
 					break;
 
 				case ROBOT_COMMAND_LED_OFF:
-					Log(LOG_DEBUG, "Turn off led.");
+					Log("Turn off led.\n");
 					RobotSetLedState(0);
 					break;
 
 				case ROBOT_COMMAND_POWER_OFF:
-					Log(LOG_DEBUG, "Halting the system.");
-					if (system("sudo halt") == -1) Log(LOG_ERR, "Failed to halt the system.");
+					Log("Halting the system.\n");
+					if (system("sudo poweroff") == -1) Log("Failed to halt the system.\n");
 					break;
 
 				default:
-					Log(LOG_DEBUG, "Unknown command received.");
+					Log("Warning : unknown command received.\n");
 					break;
 			}
 		}

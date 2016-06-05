@@ -1,42 +1,24 @@
 /** @file Log.h
- * Write string data to syslog.
+ * Write log messages to a file.
  * @author Adrien RICCIARDI
- * @version 1.0 : 18/01/2014
  */
 #ifndef H_LOG_H
 #define H_LOG_H
 
-#include <syslog.h> // To provide LOG_XXX constants
-
-//-------------------------------------------------------------------------------------------------
-// Constants
-//-------------------------------------------------------------------------------------------------
-/** Enable or disable logs. */
-#define LOG_ENABLE 1
-
 //-------------------------------------------------------------------------------------------------
 // Functions
 //-------------------------------------------------------------------------------------------------
-/** Connect to syslog.
- * @param String_Program_Name The program name which will appear in syslog.
- * @note There is no need to disconnect explicitely from syslog, so no LogQuit() function is provided.
+/** Open the log file.
+ * @param String_Log_File_Name The file to store log messages to.
+ * @return 0 on success,
+ * @return 1 if an error happened.
  */
-#if LOG_ENABLE == 1
-	void LogInit(char *String_Program_Name);
-#else
-	#define LogInit(String_Program_Name)
-#endif
+int LogInitialize(char *String_Log_File_Name);
 
-/** Display a debug message to syslog.
- * @param Priority Syslog message priority (@see man syslog).
- * @param String_Format Format of the string to display.
- * @param ... Printf() like parameters.
+/** Write a debug message to log system
+ * @param String_Format Format string same than printf().
  */
-#if LOG_ENABLE == 1
-	void Log(int Priority, char *String_Format, ...);
-#else
-	#define Log(Priority, String_Format, ...)
-#endif
+void Log(char *String_Format, ...);
 
 #endif
 

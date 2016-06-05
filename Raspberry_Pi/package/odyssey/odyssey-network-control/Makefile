@@ -25,7 +25,7 @@ define Build/Prepare
 	$(CP) src/* $(PKG_BUILD_DIR)
 endef
 
-TARGET_CFLAGS += -W -Wall
+TARGET_CFLAGS += -W -Wall -Werror
 
 define Build/Compile
 	$(eval SOURCES=$(shell find $(PKG_BUILD_DIR) -name "*.c"))
