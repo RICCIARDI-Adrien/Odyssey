@@ -59,6 +59,10 @@ static void *ThreadReadBatteryVoltage(void __attribute__((unused)) *Pointer_Para
  */
 static void SignalHandlerTerm(int __attribute__((unused)) Signal_Number)
 {
+	// Stop robot
+	RobotSetMotion(ROBOT_MOTION_STOPPED);
+	RobotSetLedState(0);
+	
 	close(Socket_Client);
 	close(Socket_Server);
 	Log("Server successfully exited.\n");
@@ -70,6 +74,10 @@ static void SignalHandlerTerm(int __attribute__((unused)) Signal_Number)
  */
 static void SignalHandlerPipe(int __attribute__((unused)) Signal_Number)
 {
+	// Stop robot
+	RobotSetMotion(ROBOT_MOTION_STOPPED);
+	RobotSetLedState(0);
+	
 	close(Socket_Client);
 	Log("Client connection dropped, closing port.\n");
 }
@@ -121,7 +129,7 @@ int main(int argc, char *argv[])
 		Log("Error : can't connect to the robot.\n");
 		return EXIT_FAILURE;
 	}
-	// Stop robot in case of UART glitch
+	// Stop robot as nobody has control on it
 	RobotSetMotion(ROBOT_MOTION_STOPPED);
 	RobotSetLedState(0);
 
@@ -236,7 +244,7 @@ int main(int argc, char *argv[])
 
 				case ROBOT_COMMAND_POWER_OFF:
 					Log("Halting the system.\n");
-					if (system("sudo poweroff") == -1) Log("Failed to halt the system.\n");
+					if (system("poweroff") == -1) Log("Failed to halt the system.\n");
 					break;
 
 				default:
