@@ -1,0 +1,3 @@
+[submodule "Raspberry_Pi/OpenWRT"]
+	path = Raspberry_Pi/OpenWRT
+	url = git://github.com/openwrt/openwrt.git

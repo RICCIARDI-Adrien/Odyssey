@@ -1,7 +1,11 @@
 Odyssey
 =======
 
-A lightweight version of the Mercury/Polyphemus robot software.
+A lightweight version of the Mercury/Polyphemus robot software.  
+This project uses git submodules, use the following command to clone it :
+```
+git clone --recursive https://github.com/RICCIARDI-Adrien/Odyssey
+```
 
 See https://github.com/bibi09/odyssey for the first and more complete version.
 
@@ -26,6 +30,6 @@ A Raspberry Pi Model A handles the robot's camera (a RaspiCam) and creates a WiF
 
 The whole Raspberry Pi firmware is located in this directory. It is based on the OpenWRT Linux distribution.
 
-To compile it, simply type *make* in the *Raspberry_Pi* directory. The resulting SD-card image will be located in the *bin/brcm2708/openwrt-brcm2708-bcm2708-rpi-ext4-sdcard.img* file.
+To compile it, simply type *make* in the *Raspberry_Pi* directory. The resulting SD-card image will be located in the *OpenWRT/bin/brcm2708/openwrt-brcm2708-bcm2708-rpi-ext4-sdcard.img* file.
 
 You can burn it on a SD-card the same way than any other image is burned.
