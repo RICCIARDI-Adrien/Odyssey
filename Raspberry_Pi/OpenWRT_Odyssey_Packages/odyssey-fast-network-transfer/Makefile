@@ -26,9 +26,9 @@ define Build/Prepare
 endef
 
 TARGET_CFLAGS += -W -Wall -Werror
+SOURCES = $(PKG_BUILD_DIR)/Main.c $(PKG_BUILD_DIR)/Network.c
 
 define Build/Compile
-	$(eval SOURCES=$(shell find $(PKG_BUILD_DIR) -name "*.c"))
 	$(TARGET_CC) $(TARGET_CFLAGS) $(SOURCES) -o $(PKG_BUILD_DIR)/fast-network-transfer
 endef
 
