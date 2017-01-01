@@ -13,6 +13,9 @@ all:
 
 	@# Create links to make Odyssey packages available into OpenWRT build system
 	@ln -sf ../../Files/package/odyssey OpenWRT/package/odyssey
+	
+	@# Overwrite some target files (the ones needed to make the camera work)
+	@cp -r Files/target OpenWRT
 
 	@# Build image
 	cd OpenWRT && $(MAKE)
