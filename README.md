@@ -30,6 +30,6 @@ A Raspberry Pi Model A handles the robot's camera (a RaspiCam) and creates a WiF
 
 The whole Raspberry Pi firmware is located in this directory. It is based on the OpenWRT Linux distribution.
 
-To compile it, simply type *make* in the *Raspberry_Pi* directory. The resulting SD-card image will be located in the *OpenWRT/bin/brcm2708/openwrt-brcm2708-bcm2708-rpi-ext4-sdcard.img* file.
+To compile it, simply type *make* in the *Raspberry_Pi* directory. The resulting SD-card image will be located in the *Raspberry_Pi/OpenWRT/bin/brcm2708/bcm2708/lede-openwrt-brcm2708-bcm2708-rpi-ext4-sdcard.img.gz* file.
 
-You can burn it on a SD-card the same way than any other image is burned.
+You can burn it on a SD-card the same way than any other image is burned (you must decompress it before).
